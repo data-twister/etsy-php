@@ -60,6 +60,17 @@ All methods has only one argument, an array with two items (both are optional, d
    							    "secondary_cost" => 10.0
            )));
 ```
+## Adding provisional users to your etsy app
+you need to send a curl request to provision users to your app if its not public ie.
+curl --header "x-api-key: ETSY_CONSUMER_KEY" --data "" https://openapi.etsy.com/v3/application/provisional-users/user_id
+
+to find the user_id go to the user profile and highlight the send user a message their id will be in the status bar as recipient_id
+https://www.etsy.com/conversations/new?with_id=373282513&referring_id=8599196&referring_type=shop&recipient_id=373282513
+
+tolist the users you have allowed app access 
+curl --header "x-api-key: ETSY_CONSUMER_KEY" https://openapi.etsy.com/v3/application/provisional-users
+
+
 
 ## OAuth configuration script ##
 Etsy API uses OAuth 1.0 authentication, so lets setup our credentials.
