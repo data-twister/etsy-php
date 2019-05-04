@@ -204,4 +204,13 @@ class EtsyRequestException extends \Exception
 	{
 		return __CLASS__ . ": [{$this->code}]: ". $this->buildMessage();
 	}
+
+	public function getScopes()
+	{
+        $data = $this->oauth->fetch($this->base_url . "/oauth/scopes", null, OAUTH_HTTP_METHOD_GET);
+        $json = $this->oauth->getLastResponse();
+        echo '<pre>';
+		print_r(json_decode($json, true));
+		echo '</pre>';
+	}
 }
