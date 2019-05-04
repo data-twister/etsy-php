@@ -93,7 +93,7 @@ class EtsyApi
 	}
 	private function prepareParameters($params) {
 		$query_pairs = array();
-		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private", "language");
+		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private", "language", "was_shipped","was_paid","shop_id");
 		//allowing additional params that are only usable in the updateInventory method, because oauth can't handle these in the data array
 		$allowed[] = 'price_on_property';
 		$allowed[] = 'quantity_on_property';
