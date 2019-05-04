@@ -1,8 +1,6 @@
 <?php
 namespace Etsy;
-
 use Etsy\RequestValidator;
-
 /**
 *
 */
@@ -11,14 +9,12 @@ class EtsyApi
 	private $client;
 	private $methods = array();
 	private $returnJson = false;
-
 	function __construct($client, $methods_file = null)
 	{
 		if ($methods_file === null)
 		{
 			$methods_file = dirname(realpath(__FILE__)) . '/methods.json';
 		}
-
 		if (!file_exists($methods_file))
 		{
 			exit("Etsy methods file '{$methods_file}' does not exist!");
@@ -26,40 +22,32 @@ class EtsyApi
 		$this->methods = json_decode(file_get_contents($methods_file), true);
 		$this->client = $client;
 	}
-
 	public function setReturnJson($returnJson)
 	{
 		$this->returnJson = $returnJson;
 	}
-
 	private function request($arguments)
 	{
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
 		$params = $this->prepareParameters($args['params']);
 		$data = @$this->prepareData($args['data']);
-
 		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
 			return $args["params"][$matches[1]].$matches[2];
 		}, $method['uri']);
-
 		if (!empty($args['associations']))
 		{
 			$params['includes'] = $this->prepareAssociations($args['associations']);
 		}
-
 		if (!empty($args['fields']))
 		{
 			$params['fields'] = $this->prepareFields($args['fields']);
 		}
-
 		if(!empty($params)) {
 			$uri .= "?" . http_build_query($params);
 		}
-
 		return $this->validateResponse( $args, $this->client->request($uri, $data, $method['http_method'], $this->returnJson) );
 	}
-
 	protected function validateResponse($request_args, $response)
 	{
 		if (!empty($request_args['associations']))
@@ -76,7 +64,6 @@ class EtsyApi
 					} elseif (!$this->returnJson && isset($result['error_messages'])) {
 						$error_messages = $result['error_messages'];
 					}
-
 					if (!empty($error_messages))
 					{
 						foreach ($error_messages as $error_message)
@@ -92,7 +79,6 @@ class EtsyApi
 		}
 		return $response;
 	}
-
 	private function prepareData($data) {
 		$result = array();
 		foreach ($data as $key => $value) {
@@ -101,17 +87,17 @@ class EtsyApi
 				$result[$key] = $value;
 				continue;
 			}
-
 			$result[$key] = $value ? 1 : 0;
 		}
-
 		return $result;
 	}
-
 	private function prepareParameters($params) {
 		$query_pairs = array();
 		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private", "language");
-
+		//allowing additional params that are only usable in the updateInventory method, because oauth can't handle these in the data array
+		$allowed[] = 'price_on_property';
+		$allowed[] = 'quantity_on_property';
+		$allowed[] = 'sku_on_property';
 		if ($params) {
 			foreach($params as $key=>$value) {
 				if (in_array($key, $allowed)) {
@@ -119,10 +105,8 @@ class EtsyApi
 				}
 			}
 		}
-
 		return $query_pairs;
 	}
-
 	private function prepareAssociations($associations)
 	{
 		$includes = array();
@@ -135,16 +119,12 @@ class EtsyApi
 				$includes[] = $value;
 			}
 		}
-
 		return implode(',', $includes);
 	}
-
 	private function prepareFields($fields)
 	{
-
 		return implode(',', $fields);
 	}
-
 	private function buildAssociation($assoc, $conf)
 	{
 		$association = $assoc;
@@ -168,10 +148,8 @@ class EtsyApi
 		{
 			$association .= '/' . $this->prepareAssociations($conf['associations']);
 		}
-
 		return $association;
 	}
-
 	/*
 	* array('params' => array(), 'data' => array())
 	* :params for uri params
@@ -185,7 +163,6 @@ class EtsyApi
 			{
 				throw new \Exception('Invalid params for method "'.$method.'": ' . implode(', ', $validArguments['_invalid']) . ' - ' . json_encode($this->methods[$method]));
 			}
-
 			return call_user_func_array(array($this, 'request'), array(
 																	array(
 																		'method' => $method,
@@ -200,5 +177,4 @@ class EtsyApi
 			throw new \Exception('Method "'.$method.'" not exists');
 		}
 	}
-
 }
