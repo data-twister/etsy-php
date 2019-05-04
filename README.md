@@ -62,7 +62,7 @@ All methods has only one argument, an array with two items (both are optional, d
 ```
 ## Adding provisional users to your etsy app
 
-#### This can be done using php /scripts/app-setup.php or via cli
+#### This can be done using php /scripts/provision-user.php or via cli
 
 you need to send a curl request to provision users to your app if its not public ie.
 
