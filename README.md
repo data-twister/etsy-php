@@ -61,6 +61,9 @@ All methods has only one argument, an array with two items (both are optional, d
            )));
 ```
 ## Adding provisional users to your etsy app
+
+#### This can be done using php /scripts/app-setup.php or via cli
+
 you need to send a curl request to provision users to your app if its not public ie.
 
 curl --header "x-api-key: ETSY_CONSUMER_KEY" --data "" https://openapi.etsy.com/v3/application/provisional-users/user_id
@@ -72,7 +75,6 @@ https://www.etsy.com/conversations/new?with_id=373282513&referring_id=8599196&re
 to list the users you have allowed app access 
 
 curl --header "x-api-key: ETSY_CONSUMER_KEY" https://openapi.etsy.com/v3/application/provisional-users
-
 
 
 ## OAuth configuration script ##
